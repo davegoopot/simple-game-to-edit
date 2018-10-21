@@ -3,9 +3,9 @@
 // so preload, create and update can access them.
 
 // Things that change how the game works
-var gravity = 500;
-var playerMoveSpeed = 100;
-var playerJumpSpeed = 300;
+var gravity = 464;
+var playerMoveSpeed = 50;
+var playerJumpSpeed = 140;
 
 // Parts of the game
 var game;
@@ -40,12 +40,12 @@ playState.init = function (levelToRun) {
 
 playState.preload = function () {
     // Here we preload the image assets - make more here http://piskelapp.com
+    // For the Raspberry Pi version of the game make your sprites szied 8 x 8 pixels
     game.load.crossOrigin = "anonymous";
-    game.load.image("player", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAAKUlEQVRIie3NoQEAAAgDoP3/8ZKeoYFAJtPOhYjFYrFYLBaLxWKx+G+8cOTYhPAlQ2YAAAAASUVORK5CYII=");
-    //game.load.spritesheet('player', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAABACAYAAAB7jnWuAAAAPUlEQVRoge3SMQEAAAyDsPo3vcngCQpysIsbAAAAAAAAAAAAAAAAAEAOkPIJAQAAAAAAAAAAAAAAAABqwAOdyOO0PP/+wQAAAABJRU5ErkJggg==',32,32); 
-    game.load.image("wall", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAALElEQVRIie3NMQEAAAQAMIcw+qfQihgcO3YvsnouhFgsFovFYrFYLBaL/8YLUq7ap4GwZIYAAAAASUVORK5CYII=");
-    game.load.image("coin", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAAK0lEQVRIie3NoQEAAAQAMMH/xVO+4gzCwvKiK+dCiMVisVgsFovFYrH4b7wNhlLxXKUgugAAAABJRU5ErkJggg==");
-    game.load.image("enemy", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAAKElEQVRIie3NoQEAAAjAoP3/tJ6hgUCmqbmQWCwWi8VisVgsFov/xgvVbAFikbDobAAAAABJRU5ErkJggg==");
+    game.load.image("player", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAE0lEQVQoU2N0/M30nwEPYBwZCgA3jhHxR2tq9gAAAABJRU5ErkJggg==");
+    game.load.image("wall", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAE0lEQVQoU2NkSvr9nwEPYBwZCgDE4hL5uPBlkAAAAABJRU5ErkJggg==");
+    game.load.image("coin", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAFElEQVQoU2P8/ZjpPwMewDgyFAAAIzMXAYU8KAAAAAAASUVORK5CYII=");
+    game.load.image("enemy", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAE0lEQVQoU2O8KiHxnwEPYBwZCgA2exApBsvRwAAAAABJRU5ErkJggg==");
 
     // Here we preload the audio assets - make more here http://sfbgames.com/chiptone/
     game.load.audio("win", "https://s3-us-west-2.amazonaws.com/s.cdpn.io/1171931/win.wav");
@@ -65,8 +65,8 @@ playState.create = function () {
     // set up cursor keys to allow user input (the options are set in update)
     game.cursor = game.input.keyboard.createCursorKeys();
 
-    // add the main player to the game 70 pixels to the left and 100 pixels down from the top
-    player = game.add.sprite(20, 100, "player");
+    // add the main player to the game
+    player = game.add.sprite(5, 25, "player");
     //player.animations.add("move", [0, 1], 3, true);
     //player.animations.play("move");
 
@@ -205,7 +205,7 @@ playState.nextlevel = function () {
 };
 
 // Initialize the game at a certain size
-game = new Phaser.Game(550, 400, Phaser.AUTO, "", "main", false, false);
+game = new Phaser.Game(138, 100, Phaser.AUTO, "", "main", false, false);
 
 //Add and start our play state
 game.state.add("main", playState);
@@ -218,17 +218,18 @@ function loadLevel (level) {
     var wall;
     var coin;
     var enemy;
+    var sprite_size = 8;
     for (i = 0; i < level.length; i = i + 1) {
         for (j = 0; j < level[i].length; j = j + 1) {
             if (level[i][j] === "x") { // Create a wall and add it to the 'walls' group
-                wall = game.add.sprite(0 + 32 * j, 0 + 32 * i, "wall");
+                wall = game.add.sprite(0 + sprite_size * j, 0 + sprite_size * i, "wall");
                 wall.body.immovable = true;
                 walls.add(wall);
             } else if (level[i][j] === "o") { // Create a coin and add it to the 'coins' group
-                coin = game.add.sprite(0 + 32 * j, 0 + 32 * i, "coin");
+                coin = game.add.sprite(0 + sprite_size * j, 0 + sprite_size * i, "coin");
                 coins.add(coin);
             } else if (level[i][j] === "h") { // Create a enemy and add it to the 'enemies' group
-                enemy = game.add.sprite(0 + 32 * j, 0 + 32 * i, "enemy");
+                enemy = game.add.sprite(0 + sprite_size * j, 0 + sprite_size * i, "enemy");
                 enemies.add(enemy);
             }
         }
